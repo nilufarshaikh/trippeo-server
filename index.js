@@ -1,11 +1,14 @@
 import express from "express";
 import "dotenv/config";
+import cors from "cors";
 import dbConnect from "./config/db.js";
 import userRoutes from "./routes/user-routes.js";
 import travelStoryRoutes from "./routes/travel-story-routes.js";
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
 
 await dbConnect();
 
