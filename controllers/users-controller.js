@@ -28,13 +28,13 @@ const register = async (req, res) => {
         .json({ success: false, message: "The provided email already exists" });
     }
 
-    const newUser = await User.create({
+    const response = await User.create({
       username,
       email,
       password: bcrypt.hashSync(password),
     });
 
-    res.status(201).json({ success: true, data: newUser });
+    res.status(201).json({ success: true, data: { id: response._id } });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Error creating account" });
@@ -82,9 +82,24 @@ const login = async (req, res) => {
 
 const profile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const response = await User.findById(req.user.id);
 
-    res.json(user);
+    if (!response) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const user = {
+      id: response._id,
+      username: response.username,
+      email: response.email,
+      profile_picture: response.profile_picture,
+      followers: response.followers,
+      following: response.following,
+    };
+
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
     console.log(error);
     return res
