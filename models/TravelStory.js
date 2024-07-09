@@ -23,15 +23,17 @@ const travelStorySchema = new Schema(
     },
     itinerary: [
       {
-        days: {
-          type: String,
+        day: {
+          type: Number,
+          required: true,
         },
-        activities: {
-          type: String,
-        },
-        description: {
-          type: String,
-        },
+        activities: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
+        notes: String,
       },
     ],
     foods_to_try: {
@@ -63,7 +65,7 @@ const travelStorySchema = new Schema(
           type: String,
           required: true,
         },
-        createdAt: {
+        created_at: {
           type: Date,
           default: Date.now,
         },
