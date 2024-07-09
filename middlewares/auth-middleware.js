@@ -1,29 +1,31 @@
 import jwt from "jsonwebtoken";
 
-const authenticate = (req, res, next) => {
-  const bearerTokenString = req.headers.authorization;
+const verifyAuthToken = (req, res, next) => {
+  const authorizationHeader = req.headers.authorization;
 
-  if (!bearerTokenString) {
-    return res.status(401).json({
-      error: "Resource requires Bearer token in Authorization header",
-    });
+  if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+    return res
+      .status(401)
+      .json({ success: false, error: "Invalid authorization header" });
   }
 
-  const splitBearerTokenString = bearerTokenString.split(" ");
+  const token = authorizationHeader.replace("Bearer ", "");
 
-  if (splitBearerTokenString.length !== 2) {
-    return res.status(400).json({ error: "Bearer token is malformed" });
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, error: "Authorization token not found" });
   }
 
-  const token = splitBearerTokenString[1];
-
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ error: "Invalid JWT" });
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    req.user = decoded;
 
     next();
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(403).json({ success: false, error: "Invalid token" });
+  }
 };
 
-export default authenticate;
+export default verifyAuthToken;
