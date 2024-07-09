@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export default (req, res, next) => {
+const authenticate = (req, res, next) => {
   const bearerTokenString = req.headers.authorization;
 
   if (!bearerTokenString) {
@@ -25,3 +25,5 @@ export default (req, res, next) => {
     next();
   });
 };
+
+export default authenticate;
