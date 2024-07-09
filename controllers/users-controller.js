@@ -11,10 +11,16 @@ const register = async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
-    return res.status(400).send(`Not a valid email format.`);
+    return res.status(400).send(`Not a valid email format`);
   }
 
   try {
+    const emailExist = await User.findOne({ email: email });
+
+    if (emailExist) {
+      return res.status(400).send(`Email already exists`);
+    }
+
     const newUser = await User.create({
       username,
       email,
@@ -22,7 +28,8 @@ const register = async (req, res) => {
     });
     res.status(201).json(newUser);
   } catch (err) {
-    res.status(500).send(`Error registering user: ${err}`);
+    console.log(err);
+    res.status(500).send("Error registering user");
   }
 };
 
