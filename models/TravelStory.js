@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const travelStorySchema = new Schema(
   {
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -36,28 +36,22 @@ const travelStorySchema = new Schema(
         notes: String,
       },
     ],
-    foods_to_try: {
+    foodsToTry: {
       type: String,
     },
-    best_time_to_visit: {
+    bestTimeToVisit: {
       type: String,
     },
-    places_to_visit: {
+    placesToVisit: {
       type: String,
     },
     tips: {
       type: String,
     },
     photos: [String],
-    likes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     comments: [
       {
-        user: {
+        userId: {
           type: Schema.Types.ObjectId,
           ref: "User",
         },
@@ -65,7 +59,7 @@ const travelStorySchema = new Schema(
           type: String,
           required: true,
         },
-        created_at: {
+        createdAt: {
           type: Date,
           default: Date.now,
         },

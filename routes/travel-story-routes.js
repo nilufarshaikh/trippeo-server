@@ -4,6 +4,8 @@ import verifyAuthToken from "../middlewares/auth-middleware.js";
 
 const router = express.Router();
 
-router.get("/", verifyAuthToken, travelStoryController.stories);
+router
+  .get("/", verifyAuthToken, travelStoryController.stories)
+  .post("/", verifyAuthToken, travelStoryController.createStory);
 
 export default router;
