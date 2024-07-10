@@ -1,31 +1,54 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import validator from "validator";
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, confirmPassword } = req.body;
 
-  if (!username || !email || !password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please enter the required fields" });
+  if (!username || !email || !password || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Please enter the required fields",
+    });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (username.length > 50) {
+    return res.status(400).json({
+      success: false,
+      message: "Name must not exceed 50 characters",
+    });
+  }
 
-  if (!emailRegex.test(email)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please enter a valid email" });
+  if (password.length < 6) {
+    return res.status(400).json({
+      success: false,
+      message: "Password must be at least 6 characters",
+    });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Passwords do not match",
+    });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid email address",
+    });
   }
 
   try {
     const emailExist = await User.findOne({ email: email });
 
     if (emailExist) {
-      return res
-        .status(400)
-        .json({ success: false, message: "The provided email already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "The provided email already exists",
+      });
     }
 
     const response = await User.create({
@@ -34,12 +57,16 @@ const register = async (req, res) => {
       password: bcrypt.hashSync(password),
     });
 
-    res.status(201).json({ success: true, data: { id: response._id } });
+    res.status(201).json({
+      success: true,
+      data: { id: response._id },
+    });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error creating user account" });
+    res.status(500).json({
+      success: false,
+      message: "Error creating user account",
+    });
   }
 };
 
@@ -47,26 +74,29 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please enter all required fields" });
+    return res.status(400).json({
+      success: false,
+      message: "Please enter the required fields",
+    });
   }
 
   try {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const isPasswordCorrect = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordCorrect) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const token = jwt.sign(
@@ -75,10 +105,16 @@ const login = async (req, res) => {
       { expiresIn: "24h" }
     );
 
-    res.status(200).json({ success: true, token: token });
+    res.status(200).json({
+      success: true,
+      token: token,
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Failed to login" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to login",
+    });
   }
 };
 
@@ -87,9 +123,10 @@ const profile = async (req, res) => {
     const response = await User.findById(req.user.id);
 
     if (!response) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     const user = {
@@ -101,12 +138,16 @@ const profile = async (req, res) => {
       following: response.following,
     };
 
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch user profile" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user profile",
+    });
   }
 };
 
