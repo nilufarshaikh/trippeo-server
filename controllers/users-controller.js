@@ -120,7 +120,10 @@ const login = async (req, res) => {
 
 const profile = async (req, res) => {
   try {
-    const response = await User.findById(req.user.id);
+    const userId = req.user.id;
+    const response = await User.findById(userId)
+      .populate("travelStories")
+      .exec();
 
     if (!response) {
       return res.status(400).json({
@@ -133,9 +136,11 @@ const profile = async (req, res) => {
       id: response._id,
       username: response.username,
       email: response.email,
-      profile_picture: response.profile_picture,
-      followers: response.followers,
-      following: response.following,
+      profilePicture: `https://res.cloudinary.com/dbzk0hl7u/image/upload/${response.profilePicture}`,
+      followers: response.followers.length,
+      following: response.following.length,
+      travelStories: response.travelStories,
+      travelStoriesCount: response.travelStories.length,
     };
 
     res.status(200).json({

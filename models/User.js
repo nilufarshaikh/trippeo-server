@@ -39,8 +39,17 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// Define a virtual field for travelStories
+userSchema.virtual("travelStories", {
+  ref: "TravelStory",
+  localField: "_id",
+  foreignField: "userId",
+});
 
 const User = mongoose.model("User", userSchema);
 
