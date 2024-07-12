@@ -24,6 +24,20 @@ const userSchema = new Schema(
       type: String,
       default: "default.jpg",
     },
+    bio: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      default: "Content Creator and Film Maker",
+    },
+    location: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      default: "Toronto, ON",
+    },
     followers: [
       {
         type: Schema.Types.ObjectId,
@@ -44,7 +58,6 @@ const userSchema = new Schema(
   }
 );
 
-// Define a virtual field for travelStories
 userSchema.virtual("travelStories", {
   ref: "TravelStory",
   localField: "_id",
