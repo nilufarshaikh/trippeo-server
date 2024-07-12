@@ -14,10 +14,10 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // This code is for testing purpose, needs to be removed later.
-upload.single("image"),
-  (req, res, next) => {
-    console.log(req.file.path);
-    next();
-  };
+// upload.single("image"),
+//   (req, res, next) => {
+//     console.log(req.file.path);
+//     next();
+//   };
 
 export default upload;

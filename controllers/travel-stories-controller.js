@@ -2,7 +2,7 @@ import TravelStory from "../models/TravelStory.js";
 
 const stories = async (_req, res) => {
   try {
-    const response = await TravelStory.find();
+    const response = await TravelStory.find().sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -19,9 +19,35 @@ const stories = async (_req, res) => {
 
 const createStory = async (req, res) => {
   try {
+    const {
+      title,
+      location,
+      description,
+      foodsToTry,
+      bestTimeToVisit,
+      tips,
+      placesToVisit,
+    } = req.body;
+
+    const newdata = {
+      title: title,
+      location: location,
+      description: description,
+      foodsToTry: foodsToTry,
+      bestTimeToVisit: bestTimeToVisit,
+      placesToVisit: placesToVisit,
+      itinerary: JSON.parse(req.body.dayByDayItinerary),
+      tips: tips,
+    };
+
+    const photos = req.files.map((file) => file.path);
+    //const dayByDayItinerary = JSON.parse(req.body.dayByDayItinerary);
+
     const newStory = new TravelStory({
-      ...req.body,
+      ...newdata,
       userId: req.user.id,
+      photos,
+      // itinerary: dayByDayItinerary,
     });
 
     const response = await TravelStory.create(newStory);

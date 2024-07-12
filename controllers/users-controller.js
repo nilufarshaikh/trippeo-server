@@ -138,7 +138,7 @@ const profile = async (req, res) => {
       email: response.email,
       bio: response.bio,
       location: response.location,
-      profilePicture: `https://res.cloudinary.com/dbzk0hl7u/image/upload/${response.profilePicture}`,
+      profilePicture: response.profilePicture,
       followers: response.followers.length,
       following: response.following.length,
       travelStories: response.travelStories,

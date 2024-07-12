@@ -6,11 +6,11 @@ import upload from "../middlewares/multer.js";
 const router = express.Router();
 
 router
-  .get("/", verifyAuthToken, travelStoryController.stories)
+  .get("/stories", verifyAuthToken, travelStoryController.stories)
   .post(
-    "/",
+    "/stories",
     verifyAuthToken,
-    upload.single("image"),
+    upload.array("photos", 5),
     travelStoryController.createStory
   );
 

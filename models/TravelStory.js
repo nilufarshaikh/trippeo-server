@@ -42,9 +42,7 @@ const travelStorySchema = new Schema(
     bestTimeToVisit: {
       type: String,
     },
-    placesToVisit: {
-      type: String,
-    },
+    placesToVisit: [String],
     tips: {
       type: String,
     },
