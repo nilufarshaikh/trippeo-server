@@ -100,7 +100,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, username: user.username },
       process.env.JWT_KEY,
       { expiresIn: "24h" }
     );
@@ -108,6 +108,7 @@ const login = async (req, res) => {
     res.status(200).json({
       success: true,
       token: token,
+      username: user.username,
     });
   } catch (error) {
     console.log(error);

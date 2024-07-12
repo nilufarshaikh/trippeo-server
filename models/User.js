@@ -22,20 +22,14 @@ const userSchema = new Schema(
     },
     profilePicture: {
       type: String,
-      default: "default.jpg",
+      default: "https://res.cloudinary.com/dbzk0hl7u/image/upload/default.jpg",
     },
     bio: {
       type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
       default: "Content Creator and Film Maker",
     },
     location: {
       type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
       default: "Toronto, ON",
     },
     followers: [
