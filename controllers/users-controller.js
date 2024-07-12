@@ -159,4 +159,34 @@ const profile = async (req, res) => {
   }
 };
 
-export { register, login, profile };
+const searchUser = async (req, res) => {
+  const { query } = req.query;
+  const loggedInUserId = req.user.id;
+
+  try {
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    const users = await User.find({
+      $and: [
+        { _id: { $ne: loggedInUserId } },
+        {
+          $or: [
+            { username: new RegExp(query, "i") },
+            { email: new RegExp(query, "i") },
+          ],
+        },
+      ],
+    }).select(
+      "_id username email profilePicture bio location followers following"
+    );
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export { register, login, profile, searchUser };
