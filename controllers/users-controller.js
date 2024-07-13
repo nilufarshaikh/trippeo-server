@@ -86,7 +86,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Invalid email",
       });
     }
 
@@ -95,7 +95,7 @@ const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Invalid password",
       });
     }
 
@@ -165,7 +165,7 @@ const searchUser = async (req, res) => {
 
   try {
     if (!query) {
-      return res.status(400).json({ error: "Query parameter is required" });
+      return res.status(400).json({ error: "Enter a username to search" });
     }
 
     const users = await User.find({
@@ -185,7 +185,7 @@ const searchUser = async (req, res) => {
     res.json(users);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Something went wrong" });
   }
 };
 

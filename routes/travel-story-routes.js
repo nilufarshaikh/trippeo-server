@@ -12,6 +12,7 @@ router
     verifyAuthToken,
     upload.array("photos", 5),
     travelStoryController.createStory
-  );
+  )
+  .get("/stories/:storyId", verifyAuthToken, travelStoryController.singleStory);
 
 export default router;

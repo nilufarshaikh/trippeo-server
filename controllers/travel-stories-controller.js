@@ -64,4 +64,25 @@ const createStory = async (req, res) => {
   }
 };
 
-export { stories, createStory };
+const singleStory = async (req, res) => {
+  const { storyId } = req.params;
+
+  try {
+    const response = await TravelStory.findById(storyId).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: response,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch stories",
+    });
+  }
+};
+
+export { stories, createStory, singleStory };
