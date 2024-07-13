@@ -13,6 +13,16 @@ router
     upload.array("photos", 5),
     travelStoryController.createStory
   )
-  .get("/stories/:storyId", verifyAuthToken, travelStoryController.singleStory);
+  .get("/stories/:storyId", verifyAuthToken, travelStoryController.singleStory)
+  .post(
+    "/stories/:storyId/comments",
+    verifyAuthToken,
+    travelStoryController.addComment
+  )
+  .delete(
+    "/stories/:storyId/comments/:commentId",
+    verifyAuthToken,
+    travelStoryController.deleteComment
+  );
 
 export default router;
