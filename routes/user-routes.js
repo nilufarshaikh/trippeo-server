@@ -9,7 +9,7 @@ router
   .post("/login", userController.login)
   .get("/profile", verifyAuthToken, userController.profile)
   .get("/search", verifyAuthToken, userController.searchUser)
-  .post("/follow", verifyAuthToken, userController.followUser)
-  .post("/unfollow", verifyAuthToken, userController.unfollowUser);
+  .post("/:followeeId/follow", verifyAuthToken, userController.followUser)
+  .post("/:followeeId/unfollow", verifyAuthToken, userController.unfollowUser);
 
 export default router;

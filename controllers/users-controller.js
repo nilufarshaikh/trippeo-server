@@ -109,6 +109,7 @@ const login = async (req, res) => {
       success: true,
       token: token,
       username: user.username,
+      userId: user._id,
     });
   } catch (error) {
     console.log(error);
@@ -165,18 +166,13 @@ const searchUser = async (req, res) => {
 
   try {
     if (!query) {
-      return res.status(400).json({ error: "Enter a username to search" });
+      return res.status(200).json({});
     }
 
     const users = await User.find({
       $and: [
         { _id: { $ne: loggedInUserId } },
-        {
-          $or: [
-            { username: new RegExp(query, "i") },
-            { email: new RegExp(query, "i") },
-          ],
-        },
+        { username: new RegExp(query, "i") },
       ],
     }).select(
       "_id username email profilePicture bio location followers following"
@@ -190,11 +186,8 @@ const searchUser = async (req, res) => {
 };
 
 const followUser = async (req, res) => {
-  const { followerId, followeeId } = req.body;
-
-  if (!followerId || !followeeId) {
-    return res.status(400).json({ message: "Invalid fields passed" });
-  }
+  const followerId = req.user.id;
+  const { followeeId } = req.params;
 
   try {
     const follower = await User.findById(followerId);
@@ -221,11 +214,10 @@ const followUser = async (req, res) => {
 };
 
 const unfollowUser = async (req, res) => {
-  const { followerId, followeeId } = req.body;
+  const followerId = req.user.id;
+  const { followeeId } = req.params;
 
-  if (!followerId || !followeeId) {
-    return res.status(400).json({ message: "Invalid fields passed" });
-  }
+  console.log(followerId, followeeId);
 
   try {
     const follower = await User.findById(followerId);
