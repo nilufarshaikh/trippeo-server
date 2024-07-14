@@ -2,18 +2,28 @@ import TravelStory from "../models/TravelStory.js";
 
 const stories = async (_req, res) => {
   try {
-    const response = await TravelStory.find().sort({ createdAt: -1 });
+    const response = await TravelStory.find()
+      .sort({ createdAt: -1 })
+      .populate("userId", ["username", "profilePicture"])
+      .populate({
+        path: "comments",
+        populate: {
+          path: "userId",
+          select: ["username", "profilePicture"],
+        },
+      });
 
-    res.status(200).json({
-      success: true,
-      data: response,
+    const storiesWithSortedComments = response.map((story) => {
+      story.comments.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      return story;
     });
+
+    res.status(200).json({ stories: storiesWithSortedComments });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch stories",
-    });
+    return res.status(500).json({ message: "Failed to fetch stories" });
   }
 };
 
@@ -35,22 +45,20 @@ const createStory = async (req, res) => {
       description: description,
       foodsToTry: foodsToTry,
       bestTimeToVisit: bestTimeToVisit,
-      placesToVisit: placesToVisit,
+      placesToVisit: JSON.parse(placesToVisit),
       itinerary: JSON.parse(req.body.dayByDayItinerary),
       tips: tips,
     };
 
     const photos = req.files.map((file) => file.path);
-    //const dayByDayItinerary = JSON.parse(req.body.dayByDayItinerary);
 
     const newStory = new TravelStory({
       ...newdata,
       userId: req.user.id,
       photos,
-      // itinerary: dayByDayItinerary,
     });
 
-    const response = await TravelStory.create(newStory);
+    await TravelStory.create(newStory);
     res.status(201).json({
       success: true,
       data: { id: response._id },
@@ -87,7 +95,8 @@ const singleStory = async (req, res) => {
 
 const addComment = async (req, res) => {
   const { storyId } = req.params;
-  const { userId, comment } = req.body;
+  const { comment } = req.body;
+  const userId = req.user.id;
 
   try {
     const travelStory = await TravelStory.findById(storyId);
@@ -99,13 +108,28 @@ const addComment = async (req, res) => {
     const newComment = {
       userId,
       comment,
-      createdAt: new Date(),
     };
 
     travelStory.comments.push(newComment);
     await travelStory.save();
 
-    res.status(201).json(travelStory);
+    const response = await TravelStory.find({}, "comments")
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "userId",
+          select: ["username", "profilePicture"],
+        },
+      });
+
+    const comments = response.map((story) => {
+      return story.comments.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+    });
+
+    res.status(201).json(comments[0]);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
