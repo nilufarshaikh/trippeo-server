@@ -217,8 +217,6 @@ const unfollowUser = async (req, res) => {
   const followerId = req.user.id;
   const { followeeId } = req.params;
 
-  console.log(followerId, followeeId);
-
   try {
     const follower = await User.findById(followerId);
     const followee = await User.findById(followeeId);

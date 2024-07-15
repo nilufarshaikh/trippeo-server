@@ -1,8 +1,19 @@
 import TravelStory from "../models/TravelStory.js";
+import User from "../models/User.js";
 
-const stories = async (_req, res) => {
+const stories = async (req, res) => {
   try {
-    const response = await TravelStory.find()
+    const loggedInUserId = req.user.id;
+
+    const loggedInUser = await User.findById(loggedInUserId);
+    const followedUserIds = [
+      ...loggedInUser.following.map((followedUser) => followedUser._id),
+      loggedInUserId,
+    ];
+
+    const response = await TravelStory.find({
+      userId: { $in: followedUserIds },
+    })
       .sort({ createdAt: -1 })
       .populate("userId", ["username", "profilePicture"])
       .populate({
@@ -150,8 +161,7 @@ const deleteComment = async (req, res) => {
     );
 
     await travelStory.save();
-
-    res.status(200).json(travelStory);
+    res.sendStatus(204);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
