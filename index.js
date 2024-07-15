@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import dbConnect from "./config/db.js";
+import authRoutes from "./routes/auth-routes.js";
 import userRoutes from "./routes/user-routes.js";
 import travelStoryRoutes from "./routes/travel-story-routes.js";
 
@@ -17,7 +18,8 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/auth", userRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 app.use("/api", travelStoryRoutes);
 
 const PORT = process.env.PORT || 8080;

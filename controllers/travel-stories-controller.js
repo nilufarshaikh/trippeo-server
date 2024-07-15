@@ -69,10 +69,10 @@ const createStory = async (req, res) => {
       photos,
     });
 
-    await TravelStory.create(newStory);
+    const response = await TravelStory.create(newStory);
     res.status(201).json({
-      success: true,
-      data: { id: response._id },
+      message: "Travel story created successfully",
+      story: { id: response._id },
     });
   } catch (error) {
     console.log(error);
@@ -91,10 +91,7 @@ const singleStory = async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json({
-      success: true,
-      data: response,
-    });
+    res.status(200).json({ response });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

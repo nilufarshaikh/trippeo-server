@@ -5,9 +5,6 @@ import verifyAuthToken from "../middlewares/auth-middleware.js";
 const router = express.Router();
 
 router
-  .post("/register", userController.register)
-  .post("/login", userController.login)
-  .get("/profile", verifyAuthToken, userController.profile)
   .get("/search", verifyAuthToken, userController.searchUser)
   .post("/:followeeId/follow", verifyAuthToken, userController.followUser)
   .post("/:followeeId/unfollow", verifyAuthToken, userController.unfollowUser);
