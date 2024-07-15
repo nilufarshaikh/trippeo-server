@@ -83,6 +83,8 @@ Make sure you have the following installed on your local machine:
 
    Replace `<mongo-db-connection-string>`, `<secret-key>`, `<your_cloud_name>`, `<your_api_key>`, and `<your_api_secret>` with your actual values.
 
+2. Also have a `default.jpg` file in your cloudinary for a fallback profile avatar.
+
 ### Frontend Configuration
 
 1. Create a `.env` file in the `trippeo-client` directory and add the following environment variable:
