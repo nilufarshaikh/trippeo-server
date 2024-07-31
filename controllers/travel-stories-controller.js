@@ -121,23 +121,18 @@ const addComment = async (req, res) => {
     travelStory.comments.push(newComment);
     await travelStory.save();
 
-    const response = await TravelStory.find({}, "comments")
-      .sort({ createdAt: -1 })
+    const story = await TravelStory.findById(storyId, "comments")
       .populate({
-        path: "comments",
-        populate: {
-          path: "userId",
-          select: ["username", "profilePicture"],
-        },
-      });
+        path: "comments.userId",
+        select: ["username", "profilePicture"],
+      })
+      .sort({ "comments.createdAt": -1 });
 
-    const comments = response.map((story) => {
-      return story.comments.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-    });
+    const allComments = story.comments.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
-    res.status(201).json(comments[0]);
+    res.status(201).json(allComments);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
